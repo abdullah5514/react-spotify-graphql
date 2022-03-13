@@ -44,12 +44,12 @@ const options = {
   filterType: 'checkbox',
 };
 
-const Home = () => {
+const Authors = () => {
   return (
     <RootContainer>
       <>
         <MUIDataTable
-          title={'Books List'}
+          title={'Authors List'}
           data={data}
           columns={columns}
           options={options}
@@ -59,4 +59,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Authors;
