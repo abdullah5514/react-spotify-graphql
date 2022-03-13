@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { Box, Container } from '@mui/material';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
+import {
+  Box,
+  Container,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Button,
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import Button from '@mui/material/Button';
 import Link from 'next/link';
 
 const NavBar = () => {

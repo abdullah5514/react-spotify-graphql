@@ -18,5 +18,5 @@ const RootContainer = ({ children }) => {
 export default RootContainer;
 
 RootContainer.propTypes = {
-  children: PropTypes.elementType.isRequired,
+  children: PropTypes.element.isRequired,
 };
