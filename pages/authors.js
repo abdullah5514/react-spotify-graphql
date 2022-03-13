@@ -1,49 +1,13 @@
 import React, { useState } from 'react';
 import { Button } from '@mui/material';
-import MUIDataTable from 'mui-datatables';
 
-import { RootContainer, TransitionModal, AuthorForm } from '../components';
-
-const columns = ['Name', 'Company', 'City', 'State'];
-
-const data = [
-  ['Joe James', 'Test Corp', 'Yonkers', 'NY'],
-  ['John Walsh', 'Test Corp', 'Hartford', 'CT'],
-  ['Bob Herm', 'Test Corp', 'Tampa', 'FL'],
-  ['James Houston', 'Test Corp', 'Dallas', 'TX'],
-  ['Joe James', 'Test Corp', 'Yonkers', 'NY'],
-  ['John Walsh', 'Test Corp', 'Hartford', 'CT'],
-  ['Bob Herm', 'Test Corp', 'Tampa', 'FL'],
-  ['James Houston', 'Test Corp', 'Dallas', 'TX'],
-  ['Joe James', 'Test Corp', 'Yonkers', 'NY'],
-  ['John Walsh', 'Test Corp', 'Hartford', 'CT'],
-  ['Bob Herm', 'Test Corp', 'Tampa', 'FL'],
-  ['James Houston', 'Test Corp', 'Dallas', 'TX'],
-  ['Joe James', 'Test Corp', 'Yonkers', 'NY'],
-  ['John Walsh', 'Test Corp', 'Hartford', 'CT'],
-  ['Bob Herm', 'Test Corp', 'Tampa', 'FL'],
-  ['James Houston', 'Test Corp', 'Dallas', 'TX'],
-  ['Joe James', 'Test Corp', 'Yonkers', 'NY'],
-  ['John Walsh', 'Test Corp', 'Hartford', 'CT'],
-  ['Bob Herm', 'Test Corp', 'Tampa', 'FL'],
-  ['James Houston', 'Test Corp', 'Dallas', 'TX'],
-  ['Joe James', 'Test Corp', 'Yonkers', 'NY'],
-  ['John Walsh', 'Test Corp', 'Hartford', 'CT'],
-  ['Bob Herm', 'Test Corp', 'Tampa', 'FL'],
-  ['James Houston', 'Test Corp', 'Dallas', 'TX'],
-  ['Joe James', 'Test Corp', 'Yonkers', 'NY'],
-  ['John Walsh', 'Test Corp', 'Hartford', 'CT'],
-  ['Bob Herm', 'Test Corp', 'Tampa', 'FL'],
-  ['James Houston', 'Test Corp', 'Dallas', 'TX'],
-  ['Joe James', 'Test Corp', 'Yonkers', 'NY'],
-  ['John Walsh', 'Test Corp', 'Hartford', 'CT'],
-  ['Bob Herm', 'Test Corp', 'Tampa', 'FL'],
-  ['James Houston', 'Test Corp', 'Dallas', 'TX'],
-];
-
-const options = {
-  filterType: 'checkbox',
-};
+import {
+  RootContainer,
+  TransitionModal,
+  AuthorForm,
+  ClientOnly,
+  AllAuthors,
+} from '../components';
 
 const Authors = () => {
   const [open, setOpen] = useState(false);
@@ -56,12 +20,9 @@ const Authors = () => {
         <Button variant='outlined' color='primary' onClick={handleOpen}>
           Create Author
         </Button>
-        <MUIDataTable
-          title={'Authors List'}
-          data={data}
-          columns={columns}
-          options={options}
-        />
+        <ClientOnly>
+          <AllAuthors />
+        </ClientOnly>
         <TransitionModal open={open} handleClose={handleClose}>
           <AuthorForm handleClose={handleClose} />
         </TransitionModal>

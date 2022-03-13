@@ -29,7 +29,7 @@ TextFormField.propTypes = {
   name: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
-  helperText: PropTypes.string.isRequired,
+  helperText: PropTypes.string,
   shrink: PropTypes.bool,
   register: PropTypes.object,
 };
@@ -38,6 +38,7 @@ TextFormField.defaultProps = {
   name: '',
   label: '',
   type: '',
+  helperText: null,
   shrink: false,
   register: {},
 };

@@ -2,10 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { CacheProvider } from '@emotion/react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
+import { ApolloProvider } from '@apollo/client';
 import Head from 'next/head';
 
 import createEmotionCache from '../utils/createEmotionCache';
 import lightTheme from '../styles/theme/lightTheme';
+import client from '../apollo-client';
 import '../styles/globals.css';
 
 const clientSideEmotionCache = createEmotionCache();
@@ -21,7 +23,9 @@ const MyApp = (props) => {
       </Head>
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />
-        <Component {...pageProps} />
+        <ApolloProvider client={client}>
+          <Component {...pageProps} />
+        </ApolloProvider>
       </ThemeProvider>
     </CacheProvider>
   );
