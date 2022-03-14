@@ -1,79 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import MUIDataTable from 'mui-datatables';
 import { useQuery, gql } from '@apollo/client';
-import { Box, Typography, Button } from '@mui/material';
-import Swal from 'sweetalert2';
+import { Box, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 
 import Loader from '../loader';
-
-const columns = [
-  {
-    name: 'firstName',
-    label: 'First Name',
-    options: {
-      filter: true,
-      sort: true,
-    },
-  },
-  {
-    name: 'surName',
-    label: 'Sur Name',
-    options: {
-      filter: true,
-      sort: true,
-    },
-  },
-  {
-    name: 'birthYear',
-    label: 'Birth Year',
-    options: {
-      filter: true,
-      sort: true,
-    },
-  },
-  {
-    name: 'Action',
-    options: {
-      customBodyRender: (value, tableMeta, updateValue) => {
-        console.log('tableMeta: ', tableMeta);
-        return (
-          <Button
-            variant='outlined'
-            color='error'
-            onClick={() => {
-              Swal.fire({
-                title: 'Are you sure to delete this book?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel!',
-                reverseButtons: true,
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  Swal.fire(
-                    'Deleted!',
-                    'Your file has been deleted.',
-                    'success'
-                  );
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                  Swal.fire(
-                    'Cancelled',
-                    'Your imaginary file is safe :)',
-                    'error'
-                  );
-                }
-              });
-            }}
-          >
-            Delete
-          </Button>
-        );
-      },
-    },
-  },
-];
+import DeleteAuthor from './deleteAuthor';
 
 const QUERY = gql`
   query Authors {
@@ -91,13 +23,70 @@ const options = {
 };
 
 const AllAuthors = ({ open }) => {
+  const columns = [
+    {
+      name: 'id',
+      label: 'Id',
+      options: {
+        display: false,
+      },
+    },
+    {
+      name: 'firstName',
+      label: 'First Name',
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: 'surName',
+      label: 'Sur Name',
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: 'birthYear',
+      label: 'Birth Year',
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: 'Action',
+      options: {
+        filter: false,
+        sort: false,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          const authorName = tableMeta.rowData[1];
+          const authorId = tableMeta.rowData[0];
+          return (
+            <DeleteAuthor
+              authorId={authorId}
+              authorName={authorName}
+              setIsDeleted={setIsDeleted}
+            />
+          );
+        },
+      },
+    },
+  ];
+
   const { data, loading, error, refetch } = useQuery(QUERY);
+  const [isDeleted, setIsDeleted] = useState(false);
 
   useEffect(() => {
     if (!open) {
       refetch();
     }
-  }, [open, refetch]);
+    if (isDeleted) {
+      setIsDeleted(false);
+      refetch();
+    }
+  }, [open, refetch, isDeleted]);
 
   if (loading) {
     return <Loader />;
