@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Grid, Button } from '@mui/material';
+import React, { useEffect } from 'react';
+import { Box, Grid, Button, FormHelperText } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import { gql, useMutation } from '@apollo/client';
@@ -7,19 +7,14 @@ import BounceLoader from 'react-spinners/BounceLoader';
 
 import TextFormField from '../textFormField';
 
-const ADD_TODO = gql`
-  mutation AddTodo($text: String!) {
-    addTodo(text: $text) {
-      id
-      text
-    }
-  }
-`;
-
 const ADD_AUTHOR = gql`
-  mutation {
+  mutation CreateAuthor(
+    $firstName: String!
+    $surName: String!
+    $birthYear: String!
+  ) {
     createAuthor(
-      input: { firstName: "Spider man", surName: "Action", birthYear: "2018" }
+      input: { firstName: $firstName, surName: $surName, birthYear: $birthYear }
     ) {
       author {
         id
@@ -38,16 +33,18 @@ const AuthorForm = ({ handleClose }) => {
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log('Data: ', data);
-    console.log('Data, with Spread Operator: ', { ...data });
-    console.log('Data, with Spread Operator & variables: ', {
-      variables: { ...data },
-    });
+  useEffect(() => {
+    if (!loading && data) {
+      reset();
+      handleClose();
+    }
+  }, [loading, data, reset, handleClose]);
 
+  const onSubmit = (data) => {
     addAuthor({ variables: { ...data } });
   };
 
@@ -95,8 +92,7 @@ const AuthorForm = ({ handleClose }) => {
         <TextFormField
           name='birthYear'
           label='Birth Year'
-          type='date'
-          shrink={true}
+          type='number'
           helperText={errors?.birthYear?.message}
           disabled={loading}
           register={{
@@ -108,6 +104,17 @@ const AuthorForm = ({ handleClose }) => {
             }),
           }}
         />
+        {error && (
+          <Grid
+            container
+            direction={'row'}
+            sx={{ paddingLeft: 1, paddingRight: 1 }}
+          >
+            <FormHelperText error>
+              Something went wrong. Please try again later.
+            </FormHelperText>
+          </Grid>
+        )}
         <Grid
           container
           direction={'row-reverse'}

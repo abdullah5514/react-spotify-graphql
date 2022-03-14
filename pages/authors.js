@@ -21,7 +21,7 @@ const Authors = () => {
           Create Author
         </Button>
         <ClientOnly>
-          <AllAuthors />
+          <AllAuthors open={open} />
         </ClientOnly>
         <TransitionModal open={open} handleClose={handleClose}>
           <AuthorForm handleClose={handleClose} />
