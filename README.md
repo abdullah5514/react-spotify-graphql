@@ -23,4 +23,12 @@ npm run dev
 yarn dev
 ```
 
+Now, run the test cases:
+
+```bash
+npm run test
+# or
+yarn test
+```
+
 Open [http://localhost:3001](http://localhost:3001) with your browser to see the result.
