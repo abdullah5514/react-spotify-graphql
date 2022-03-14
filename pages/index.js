@@ -21,7 +21,7 @@ const Home = () => {
           Create Book
         </Button>
         <ClientOnly>
-          <AllBooks />
+          <AllBooks open={open} />
         </ClientOnly>
         <TransitionModal open={open} handleClose={handleClose}>
           <BookForm handleClose={handleClose} />

@@ -1,31 +1,36 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import MUIDataTable from 'mui-datatables';
 import { useQuery, gql } from '@apollo/client';
 import { Box, Typography, Button } from '@mui/material';
 import Swal from 'sweetalert2';
+import PropTypes from 'prop-types';
 
 import Loader from '../loader';
 
 const columns = [
   {
-    name: 'name',
-    label: 'Name',
+    name: 'title',
+    label: 'Title',
     options: {
       filter: true,
       sort: true,
     },
   },
   {
-    name: 'code',
-    label: 'Code',
+    name: 'publishYear',
+    label: 'Publish Year',
     options: {
       filter: true,
       sort: true,
     },
   },
   {
-    name: 'emoji',
-    label: 'Flag',
+    name: 'genre',
+    label: 'Genre',
+    options: {
+      filter: true,
+      sort: true,
+    },
   },
   {
     name: 'Action',
@@ -71,11 +76,12 @@ const columns = [
 ];
 
 const QUERY = gql`
-  query Countries {
-    countries {
-      code
-      name
-      emoji
+  query Books {
+    books {
+      id
+      title
+      publishYear
+      genre
     }
   }
 `;
@@ -84,8 +90,14 @@ const options = {
   selectableRows: false,
 };
 
-const AllBooks = () => {
-  const { data, loading, error } = useQuery(QUERY);
+const AllBooks = ({ open }) => {
+  const { data, loading, error, refetch } = useQuery(QUERY);
+
+  useEffect(() => {
+    if (!open) {
+      refetch();
+    }
+  }, [open, refetch]);
 
   if (loading) {
     return <Loader />;
@@ -109,7 +121,7 @@ const AllBooks = () => {
   return (
     <MUIDataTable
       title={'Books List'}
-      data={data.countries}
+      data={data.books}
       columns={columns}
       options={options}
     />
@@ -117,3 +129,11 @@ const AllBooks = () => {
 };
 
 export default AllBooks;
+
+AllBooks.propTypes = {
+  open: PropTypes.bool,
+};
+
+AllBooks.defaultProps = {
+  open: false,
+};

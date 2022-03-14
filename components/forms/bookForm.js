@@ -1,29 +1,40 @@
-import React from 'react';
-import { Box, Grid, Button } from '@mui/material';
+import React, { useEffect } from 'react';
+import { Box, Grid, Button, FormHelperText } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
-import { gql, useMutation } from '@apollo/client';
+import { useQuery, gql, useMutation } from '@apollo/client';
 import BounceLoader from 'react-spinners/BounceLoader';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 import TextFormField from '../textFormField';
+import Loader from '../loader';
 
-const ADD_TODO = gql`
-  mutation AddTodo($text: String!) {
-    addTodo(text: $text) {
+const QUERY_ALL_AUTHORS = gql`
+  query Authors {
+    authors {
       id
-      text
+      firstName
+      surName
     }
   }
 `;
 
 const ADD_BOOK = gql`
-  mutation {
+  mutation CreateBook(
+    $title: String!
+    $genre: String!
+    $publishYear: String!
+    $authorId: ID!
+  ) {
     createBook(
       input: {
-        title: "Spider man"
-        genre: "Action"
-        publishYear: "2018"
-        authorId: 2
+        title: $title
+        genre: $genre
+        publishYear: $publishYear
+        authorId: $authorId
       }
     ) {
       book {
@@ -39,21 +50,30 @@ const ADD_BOOK = gql`
 
 const BookForm = ({ handleClose }) => {
   const [addBook, { data, loading, error }] = useMutation(ADD_BOOK);
+  const { data: authorsData, loading: authorsLoading } =
+    useQuery(QUERY_ALL_AUTHORS);
+
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log('Data: ', data);
-    console.log('Data, with Spread Operator: ', { ...data });
-    console.log('Data, with Spread Operator & variables: ', {
-      variables: { ...data },
-    });
+  useEffect(() => {
+    if (!loading && data) {
+      reset();
+      handleClose();
+    }
+  }, [loading, data, reset, handleClose]);
 
+  const onSubmit = (data) => {
     addBook({ variables: { ...data } });
   };
+
+  if (authorsLoading) {
+    return <Loader />;
+  }
 
   return (
     <Box>
@@ -80,8 +100,7 @@ const BookForm = ({ handleClose }) => {
         <TextFormField
           name='publishYear'
           label='Publish Year'
-          type='date'
-          shrink={true}
+          type='number'
           helperText={errors?.publishYear?.message}
           disabled={loading}
           register={{
@@ -108,21 +127,47 @@ const BookForm = ({ handleClose }) => {
             }),
           }}
         />
-        <TextFormField
-          name='author'
-          label='Author'
-          type='text'
-          helperText={errors?.author?.message}
-          disabled={loading}
-          register={{
-            ...register('author', {
-              required: {
-                value: true,
-                message: 'Author is required',
-              },
-            }),
-          }}
-        />
+        <Grid item sx={{ margin: 1 }}>
+          <FormControl fullWidth>
+            <InputLabel id='authorId'>Author</InputLabel>
+            <Select
+              required
+              error={errors?.authorId?.message ? true : false}
+              disabled={loading}
+              labelId='authorId'
+              id='authorId'
+              label='Author'
+              {...register('authorId', {
+                required: {
+                  value: true,
+                  message: 'Author is required',
+                },
+              })}
+            >
+              {authorsData.authors.map((author, idx) => {
+                return (
+                  <MenuItem key={author.id} value={author.id}>
+                    {author.firsName} {author.surName}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+          {errors?.authorId?.message && (
+            <FormHelperText error>{errors?.authorId?.message}</FormHelperText>
+          )}
+        </Grid>
+        {error && (
+          <Grid
+            container
+            direction={'row'}
+            sx={{ paddingLeft: 1, paddingRight: 1 }}
+          >
+            <FormHelperText error>
+              Something went wrong. Please try again later.
+            </FormHelperText>
+          </Grid>
+        )}
         <Grid container direction={'row-reverse'} sx={{ margin: 1 }}>
           <>
             <Button
