@@ -1,7 +1,8 @@
 import React from 'react';
 import MUIDataTable from 'mui-datatables';
 import { useQuery, gql } from '@apollo/client';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
+import Swal from 'sweetalert2';
 
 import Loader from '../loader';
 
@@ -26,6 +27,47 @@ const columns = [
     name: 'emoji',
     label: 'Flag',
   },
+  {
+    name: 'Action',
+    options: {
+      customBodyRender: (value, tableMeta, updateValue) => {
+        console.log('tableMeta: ', tableMeta);
+        return (
+          <Button
+            variant='outlined'
+            color='error'
+            onClick={() => {
+              Swal.fire({
+                title: 'Are you sure to delete this book?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel!',
+                reverseButtons: true,
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                  );
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                  Swal.fire(
+                    'Cancelled',
+                    'Your imaginary file is safe :)',
+                    'error'
+                  );
+                }
+              });
+            }}
+          >
+            Delete
+          </Button>
+        );
+      },
+    },
+  },
 ];
 
 const QUERY = gql`
@@ -39,7 +81,7 @@ const QUERY = gql`
 `;
 
 const options = {
-  filterType: 'checkbox',
+  selectableRows: false,
 };
 
 const AllBooks = () => {
