@@ -27,7 +27,9 @@ const ADD_AUTHOR = gql`
   }
 `;
 
-const AuthorForm = ({ handleClose }) => {
+const sleep = (time) => new Promise((acc) => setTimeout(acc, time));
+
+const AuthorForm = ({ handleClose, onFormSubmit }) => {
   const [addAuthor, { data, loading, error }] = useMutation(ADD_AUTHOR);
 
   const {
@@ -44,7 +46,12 @@ const AuthorForm = ({ handleClose }) => {
     }
   }, [loading, data, reset, handleClose]);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    if (onFormSubmit) {
+      await sleep(500);
+      onFormSubmit(data);
+      return;
+    }
     addAuthor({ variables: { ...data } });
   };
 
